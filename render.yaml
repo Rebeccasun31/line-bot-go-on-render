@@ -2,9 +2,9 @@ services:
 - type: web
   name: line-bot-go-echo
   env: go
-  repo: https://github.com/line/line-bot-sdk-go.git
-  buildCommand: cd examples/echo_bot;go build -o app
-  startCommand: ./examples/echo_bot/app
+  repo: https://github.com/Rebeccasun31/line-bot-go-on-render.git
+  buildCommand: go build -o app
+  startCommand: ./app
   plan: free
   autoDeploy: false
   envVars:
