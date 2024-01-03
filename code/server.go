@@ -120,15 +120,16 @@ func main() {
 				switch message := e.Message.(type) {
 				// 收到的是文字訊息
 				case webhook.TextMessageContent:
+					var reply string
 					if message.text[0] == '1' {
-						reply := "新增"
+						reply = "新增"
 					} else if message.text[0] == '2' {
 						// TODO
-						reply := "刪除"
+						reply = "刪除"
 					} else {
 						rand.Seed(time.Now().UnixNano())
 						idx := rand.Intn(list_len)
-						reply := fmt.Sprintf(
+						reply = fmt.Sprintf(
 							"推薦飲料：%s %s %s，價格：%s元", drinklist[idx].Name, drinklist[idx].Sweet, drinklist[idx].Ice, drinklist[idx].Price)
 					}
 
