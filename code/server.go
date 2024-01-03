@@ -19,6 +19,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"encoding/csv"
 
 	"github.com/line/line-bot-sdk-go/v8/linebot"
 	"github.com/line/line-bot-sdk-go/v8/linebot/messaging_api"
@@ -27,22 +28,58 @@ import (
 
 type Drink struct {
 	Id int
-	Name string
 	Store string
+	Name string
 	Price string
 	Sweet string
-	Ice string
+	Additives string
+	Fruit string
+	Milk string
 }
 
-var drinklist = []Drink{
-	Drink {
-		Id: 0,
-		Name: "輕烏龍鮮奶",
-		Store: "得正",
-		Price: "60",
-		Sweet: "微糖",
-		Ice: "微冰",
-	},
+var drinklist []Drink
+
+func read_csv() {
+	file, err := os.Open("drink.csv")
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	defer file.Close()
+
+	// Create a new CSV reader
+	reader := csv.NewReader(file)
+
+	// Read all records from CSV
+	records, err := reader.ReadAll()
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	// Skip header row
+	for idx, record := range records {
+		if idx == 0 {
+			continue
+		}
+
+		
+		price, _ := strconv.Atoi(record[2])
+
+		drink := Drink{
+			Id:            idx,
+			Name:          record[1],
+			Store:         record[0],
+			Price:         price,
+			Sweet: "微糖",
+			Ice: "微冰",
+		}
+
+		// Add drink to drinklist
+		drinklist = append(drinklist, drink)
+	}
+
+	// Print the updated drinklist
 }
 
 func main() {
@@ -52,6 +89,38 @@ func main() {
 	)
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	// import csv
+	file, err := os.Open("drink.csv")
+	if err != nil {
+		fmt.Println("Error opening CSV file:", err)
+		return
+	}
+	defer file.Close()
+
+	// 創建一個CSV Reader
+	reader := csv.NewReader(file)
+
+	// 讀取CSV文件中的數據
+	records, err := reader.ReadAll()
+	if err != nil {
+		fmt.Println("Error reading CSV:", err)
+		return
+	}
+
+	for id, record := range records {
+		d := Drink{
+			Id: id,
+			Store: record[0]
+			Name: record[1]
+			Price: record[2]
+			Sweet: record[3]
+			Additives: record[4]
+			Fruit: record[5]
+			Milk: record[6]
+		}
+		drinklist = append(drinklist, d)
 	}
 
 	// Setup HTTP Server for receiving requests from LINE platform
@@ -79,7 +148,7 @@ func main() {
 				// 收到的是文字訊息
 				case webhook.TextMessageContent:
 					reply := fmt.Sprintf(
-						"推薦飲料: %s %s %s %s， 價格: %s 元", drinklist[0].Store, drinklist[0].Name, drinklist[0].Sweet, drinklist[0].Ice, drinklist[0].Price)
+						"推薦飲料: %s %s %s，價格: %s 元", drinklist[0].Store, drinklist[0].Name, drinklist[0].Sweet, drinklist[0].Price)
 
 					// 回覆
 					if _, err = bot.ReplyMessage(
