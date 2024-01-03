@@ -20,6 +20,9 @@ import (
 	"net/http"
 	"os"
 	"encoding/csv"
+	"strconv"
+	"math/rand"
+	"time"
 
 	"github.com/line/line-bot-sdk-go/v8/linebot"
 	"github.com/line/line-bot-sdk-go/v8/linebot/messaging_api"
@@ -32,12 +35,21 @@ type Drink struct {
 	Name string
 	Price string
 	Sweet string
-	Additives string
-	Fruit string
-	Milk string
+	Ice string
 }
 
-var drinklist []Drink
+var list_len int = 0
+
+var drinklist = []Drink {
+	Drink {
+		Id: 0,
+		Store: "飲水機",
+		Name: "白開水",
+		Price: "0",
+		Sweet: "無糖",
+		Ice: "去冰",
+	},
+}
 
 func read_csv() {
 	file, err := os.Open("drink.csv")
@@ -47,80 +59,43 @@ func read_csv() {
 	}
 	defer file.Close()
 
-	// Create a new CSV reader
 	reader := csv.NewReader(file)
 
-	// Read all records from CSV
 	records, err := reader.ReadAll()
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
 	}
 
-	// Skip header row
 	for idx, record := range records {
 		if idx == 0 {
 			continue
 		}
 
-		
-		price, _ := strconv.Atoi(record[2])
+		list_len += 1
 
 		drink := Drink{
 			Id:            idx,
-			Name:          record[1],
 			Store:         record[0],
-			Price:         price,
+			Name:          record[1],
+			Price:         record[2],
 			Sweet: "微糖",
 			Ice: "微冰",
 		}
 
-		// Add drink to drinklist
 		drinklist = append(drinklist, drink)
 	}
 
-	// Print the updated drinklist
 }
 
 func main() {
+	read_csv()
 	channelSecret := os.Getenv("LINE_CHANNEL_SECRET")
 	bot, err := messaging_api.NewMessagingApiAPI(
 		os.Getenv("LINE_CHANNEL_TOKEN"),
 	)
 	if err != nil {
 		log.Fatal(err)
-	}
-
-	// import csv
-	file, err := os.Open("drink.csv")
-	if err != nil {
-		fmt.Println("Error opening CSV file:", err)
-		return
-	}
-	defer file.Close()
-
-	// 創建一個CSV Reader
-	reader := csv.NewReader(file)
-
-	// 讀取CSV文件中的數據
-	records, err := reader.ReadAll()
-	if err != nil {
-		fmt.Println("Error reading CSV:", err)
-		return
-	}
-
-	for id, record := range records {
-		d := Drink{
-			Id: id,
-			Store: record[0]
-			Name: record[1]
-			Price: record[2]
-			Sweet: record[3]
-			Additives: record[4]
-			Fruit: record[5]
-			Milk: record[6]
-		}
-		drinklist = append(drinklist, d)
 	}
 
 	// Setup HTTP Server for receiving requests from LINE platform
@@ -147,8 +122,10 @@ func main() {
 				switch message := e.Message.(type) {
 				// 收到的是文字訊息
 				case webhook.TextMessageContent:
+					rand.Seed(time.Now().UnixNano())
+					idx := rand.Intn(list_len)
 					reply := fmt.Sprintf(
-						"推薦飲料: %s %s %s，價格: %s 元", drinklist[0].Store, drinklist[0].Name, drinklist[0].Sweet, drinklist[0].Price)
+						"推薦飲料: %s %s %s %s， 價格: %s 元", drinklist[idx].Store, drinklist[idx].Name, drinklist[idx].Sweet, drinklist[idx].Ice, drinklist[idx].Price)
 
 					// 回覆
 					if _, err = bot.ReplyMessage(
@@ -165,6 +142,7 @@ func main() {
 					} else {
 						log.Println("Sent text reply.")
 					}
+					
 				// 收到的是貼圖
 				case webhook.StickerMessageContent:
 					replyMessage := fmt.Sprintf(

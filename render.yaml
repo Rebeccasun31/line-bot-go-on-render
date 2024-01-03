@@ -6,7 +6,7 @@ services:
   buildCommand: cd code; go build -o app
   startCommand: ./code/app
   plan: free
-  autoDeploy: false
+  autoDeploy: true
   envVars:
   - key: LINE_CHANNEL_TOKEN
     sync: false
