@@ -127,6 +127,30 @@ func delDrink(input string) string {
 	return "刪除成功！"
 }
 
+func search(input string) string {
+	str := strings.Fields(input)
+	if len(str) != 2 {
+		return "輸入格式錯誤！"
+	}
+	var target string = str[1]
+
+	var foundIndex = -1
+
+	for i, drink := range drinklist {
+		if target == drink.Name {
+			foundIndex = i
+			break
+		}
+	}
+	if foundIndex == -1 {
+		return "找不到！"
+	}
+
+	reply := fmt.Sprintf(
+		"%s %s %s，價格：%s元", drinklist[foundIndex].Name, drinklist[foundIndex].Sweet, drinklist[foundIndex].Ice, drinklist[foundIndex].Price)
+	return reply
+}
+
 func main() {
 	read_csv()
 	channelSecret := os.Getenv("LINE_CHANNEL_SECRET")
@@ -169,7 +193,8 @@ func main() {
 						reply = delDrink(message.Text)
 						
 					} else if message.Text[0] == '3' {
-						// search
+						reply = search(message.Text)
+
 					} else if message.Text[0] == '4' { //latest 10
 						reply = ""
 						list_len := len(drinklist) - 1
