@@ -31,9 +31,9 @@ import (
 
 type Drink struct {
 	Name string
-	Price string
 	Sweet string
 	Ice string
+	Price string
 }
 
 var list_len int = 1
@@ -41,9 +41,9 @@ var list_len int = 1
 var drinklist = []Drink {
 	Drink {
 		Name: "白開水",
-		Price: "0",
 		Sweet: "無糖",
 		Ice: "去冰",
+		Price: "0",
 	},
 }
 
@@ -72,9 +72,9 @@ func read_csv() {
 
 		drink := Drink{
 			Name: record[0] + record[1],
-			Price: record[2],
 			Sweet: "微糖",
 			Ice: "微冰",
+			Price: record[2],
 		}
 
 		drinklist = append(drinklist, drink)
@@ -82,8 +82,25 @@ func read_csv() {
 
 }
 
-func addDrink() {
+func addDrink(input string) string {
+	str := strings.Fields(input)
+	if len(str) < 5 {
+		return "輸入格式錯誤！"
+	}
+	newDrink := Drink {
+		Name: str[1],
+		Sweet: str[2],
+		Ice: str[3],
+		Price: str[4],
+	}
 
+	for _, drink := range drinklist {
+		if drink.Name == newDrink.Name {
+			return "該飲料已在清單中！"
+		}
+	}
+	drinklist = append(drinklist, newDrink)
+	return "新增成功！"
 }
 
 func main() {
@@ -122,10 +139,11 @@ func main() {
 				case webhook.TextMessageContent:
 					var reply string
 					if message.Text[0] == '1' {
-						reply = "新增"
+						reply = addDrink(message.Text)
+
 					} else if message.Text[0] == '2' {
 						// TODO
-						reply = "刪除"
+						
 					} else {
 						rand.Seed(time.Now().UnixNano())
 						idx := rand.Intn(list_len)
