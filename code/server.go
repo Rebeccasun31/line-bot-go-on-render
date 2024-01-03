@@ -120,14 +120,12 @@ func main() {
 				switch message := e.Message.(type) {
 				// 收到的是文字訊息
 				case webhook.TextMessageContent:
-					if (message.text[0] == '1') {
+					if message.text[0] == '1' {
 						reply := "新增"
-					}
-					else if (message.text[0] == '2') {
+					} else if message.text[0] == '2' {
 						// TODO
 						reply := "刪除"
-					}
-					else {
+					} else {
 						rand.Seed(time.Now().UnixNano())
 						idx := rand.Intn(list_len)
 						reply := fmt.Sprintf(
