@@ -30,20 +30,16 @@ import (
 )
 
 type Drink struct {
-	Id int
-	Store string
 	Name string
 	Price string
 	Sweet string
 	Ice string
 }
 
-var list_len int = 0
+var list_len int = 1
 
 var drinklist = []Drink {
 	Drink {
-		Id: 0,
-		Store: "飲水機",
 		Name: "白開水",
 		Price: "0",
 		Sweet: "無糖",
@@ -75,10 +71,8 @@ func read_csv() {
 		list_len += 1
 
 		drink := Drink{
-			Id:            idx,
-			Store:         record[0],
-			Name:          record[1],
-			Price:         record[2],
+			Name: record[0] + record[1],
+			Price: record[2],
 			Sweet: "微糖",
 			Ice: "微冰",
 		}
@@ -125,7 +119,7 @@ func main() {
 					rand.Seed(time.Now().UnixNano())
 					idx := rand.Intn(list_len)
 					reply := fmt.Sprintf(
-						"推薦飲料: %s %s %s %s， 價格: %s 元", drinklist[idx].Store, drinklist[idx].Name, drinklist[idx].Sweet, drinklist[idx].Ice, drinklist[idx].Price)
+						"推薦飲料：%s %s %s，價格：%s元", drinklist[idx].Name, drinklist[idx].Sweet, drinklist[idx].Ice, drinklist[idx].Price)
 
 					// 回覆
 					if _, err = bot.ReplyMessage(
