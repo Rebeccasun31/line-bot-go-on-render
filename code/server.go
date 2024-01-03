@@ -79,7 +79,7 @@ func main() {
 				// 收到的是文字訊息
 				case webhook.TextMessageContent:
 					reply := fmt.Sprintf(
-						"推薦飲料: %s, 價格 %s", drinklist[0].Name, drinklist[0].Price)
+						"推薦飲料: %s %s %s %s， 價格: %s 元", drinklist[0].Store, drinklist[0].Name, drinklist[0].Sweet, drinklist[0].Ice, drinklist[0].Price)
 
 					// 回覆
 					if _, err = bot.ReplyMessage(
