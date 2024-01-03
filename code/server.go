@@ -105,20 +105,15 @@ func addDrink(input string) string {
 
 func delDrink(input string) string {
 	str := strings.Fields(input)
-	if len(str) != 5 {
+	if len(str) != 2 {
 		return "輸入格式錯誤！"
 	}
-	target := Drink {
-		Name: str[1],
-		Sweet: str[2],
-		Ice: str[3],
-		Price: str[4],
-	}
+	var target string = str[1]
 
 	var foundIndex = -1
 
 	for i, drink := range drinklist {
-		if target.Name == drink.Name {
+		if target == drink.Name {
 			foundIndex = i
 			break
 		}
@@ -199,8 +194,9 @@ func main() {
 
 				// 收到的是貼圖
 				case webhook.StickerMessageContent:
+					var reply string
+
 					rand.Seed(time.Now().UnixNano())
-					
 					list_len := len(drinklist) - 1
 					idx := rand.Intn(list_len)
 					reply = fmt.Sprintf(
