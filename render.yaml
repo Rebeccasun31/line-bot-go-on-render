@@ -1,6 +1,6 @@
 services:
 - type: web
-  name: line-bot-go-echo
+  name: drinkbot-go
   env: go
   repo: https://github.com/Rebeccasun31/line-bot-go-on-render.git
   buildCommand: cd code; go build -o app
