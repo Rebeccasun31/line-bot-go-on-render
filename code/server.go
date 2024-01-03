@@ -25,6 +25,26 @@ import (
 	"github.com/line/line-bot-sdk-go/v8/linebot/webhook"
 )
 
+type Drink struct {
+	Id int
+	Name string
+	Store string
+	Price string
+	Sweet string
+	Ice string
+}
+
+var drinklist = []Drink{
+	Drink {
+		Id: 0,
+		Name: "輕烏龍鮮奶",
+		Store: "得正",
+		Price: "60",
+		Sweet: "微糖",
+		Ice: "微冰",
+	},
+}
+
 func main() {
 	channelSecret := os.Getenv("LINE_CHANNEL_SECRET")
 	bot, err := messaging_api.NewMessagingApiAPI(
@@ -56,14 +76,18 @@ func main() {
 			switch e := event.(type) {
 			case webhook.MessageEvent:
 				switch message := e.Message.(type) {
+				// 收到的是文字訊息
 				case webhook.TextMessageContent:
+					reply := fmt.Sprintf(
+						"推薦飲料: %s %s %s %s， 價格: %s 元", drinklist[0].Store, drinklist[0].Name, drinklist[0].Sweet, drinklist[0].Ice, drinklist[0].Price)
+
+					// 回覆
 					if _, err = bot.ReplyMessage(
 						&messaging_api.ReplyMessageRequest{
 							ReplyToken: e.ReplyToken,
 							Messages: []messaging_api.MessageInterface{
 								messaging_api.TextMessage{
-									// Text: message.Text,
-									Text: "123",
+									Text: reply,
 								},
 							},
 						},
@@ -72,6 +96,7 @@ func main() {
 					} else {
 						log.Println("Sent text reply.")
 					}
+				// 收到的是貼圖
 				case webhook.StickerMessageContent:
 					replyMessage := fmt.Sprintf(
 						"sticker id is %s, stickerResourceType is %s", message.StickerId, message.StickerResourceType)
