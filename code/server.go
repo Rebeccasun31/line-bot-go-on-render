@@ -52,9 +52,9 @@ var drinklist = []Drink {
 }
 
 func read_csv() {
-	file, err := os.Open("drink.csv")
+	file, err := os.Open("code/drink.csv")
 	if err != nil {
-		fmt.Println("Error:", err)
+		log.Println("Error:", err)
 		return
 	}
 	defer file.Close()
@@ -63,7 +63,7 @@ func read_csv() {
 
 	records, err := reader.ReadAll()
 	if err != nil {
-		fmt.Println("Error:", err)
+		log.Println("Error:", err)
 		return
 	}
 
