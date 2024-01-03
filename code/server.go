@@ -175,7 +175,7 @@ func main() {
 						list_len := len(drinklist) - 1
 
 						for i := 0; i < 10 && i < list_len; i++ {
-							cur := reply = fmt.Sprintf(
+							cur := fmt.Sprintf(
 								"%s %s %s，價格：%s元\n", drinklist[list_len-i].Name, drinklist[list_len-i].Sweet, drinklist[list_len-i].Ice, drinklist[list_len-i].Price)
 
 							reply += cur
