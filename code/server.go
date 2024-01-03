@@ -82,6 +82,10 @@ func read_csv() {
 
 }
 
+func addDrink() {
+
+}
+
 func main() {
 	read_csv()
 	channelSecret := os.Getenv("LINE_CHANNEL_SECRET")
@@ -116,10 +120,19 @@ func main() {
 				switch message := e.Message.(type) {
 				// 收到的是文字訊息
 				case webhook.TextMessageContent:
-					rand.Seed(time.Now().UnixNano())
-					idx := rand.Intn(list_len)
-					reply := fmt.Sprintf(
-						"推薦飲料：%s %s %s，價格：%s元", drinklist[idx].Name, drinklist[idx].Sweet, drinklist[idx].Ice, drinklist[idx].Price)
+					if (message.text[0] == '1') {
+						reply := "新增"
+					}
+					else if (message.text[0] == '2') {
+						// TODO
+						reply := "刪除"
+					}
+					else {
+						rand.Seed(time.Now().UnixNano())
+						idx := rand.Intn(list_len)
+						reply := fmt.Sprintf(
+							"推薦飲料：%s %s %s，價格：%s元", drinklist[idx].Name, drinklist[idx].Sweet, drinklist[idx].Ice, drinklist[idx].Price)
+					}
 
 					// 回覆
 					if _, err = bot.ReplyMessage(
