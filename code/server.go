@@ -45,6 +45,49 @@ var drinklist = []Drink{
 	},
 }
 
+func read_csv() {
+	file, err := os.Open("drink.csv")
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	defer file.Close()
+
+	// Create a new CSV reader
+	reader := csv.NewReader(file)
+
+	// Read all records from CSV
+	records, err := reader.ReadAll()
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	// Skip header row
+	for idx, record := range records {
+		if idx == 0 {
+			continue
+		}
+
+		
+		price, _ := strconv.Atoi(record[2])
+
+		drink := Drink{
+			Id:            idx,
+			Name:          record[1],
+			Store:         record[0],
+			Price:         price,
+			Sweet: "微糖",
+			Ice: "微冰",
+		}
+
+		// Add drink to drinklist
+		drinklist = append(drinklist, drink)
+	}
+
+	// Print the updated drinklist
+}
+
 func main() {
 	channelSecret := os.Getenv("LINE_CHANNEL_SECRET")
 	bot, err := messaging_api.NewMessagingApiAPI(
