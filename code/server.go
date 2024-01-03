@@ -36,7 +36,7 @@ type Drink struct {
 	Price string
 }
 
-var list_len int = 1
+// var list_len int = 1
 
 var drinklist = []Drink {
 	Drink {
@@ -68,7 +68,7 @@ func read_csv() {
 			continue
 		}
 
-		list_len += 1
+		// list_len += 1
 
 		drink := Drink{
 			Name: record[0] + record[1],
@@ -101,6 +101,35 @@ func addDrink(input string) string {
 	}
 	drinklist = append(drinklist, newDrink)
 	return "新增成功！"
+}
+
+func delDrink(input string) string {
+	str := strings.Fields(input)
+	if len(str) != 5 {
+		return "輸入格式錯誤！"
+	}
+	target := Drink {
+		Name: str[1],
+		Sweet: str[2],
+		Ice: str[3],
+		Price: str[4],
+	}
+
+	var foundIndex = -1
+
+	for i, drink := range drinklist {
+		if target.Name == drink.Name {
+			foundIndex = i
+			break
+		}
+	}
+	if foundIndex == -1 {
+		return "找不到！"
+	}
+
+	drinklist = append(drinklist[:foundIndex], drinklist[foundIndex+1:]...)
+
+	return "刪除成功！"
 }
 
 func main() {
@@ -142,10 +171,11 @@ func main() {
 						reply = addDrink(message.Text)
 
 					} else if message.Text[0] == '2' {
-						// TODO
+						reply = delDrink(message.Text)
 						
 					} else {
 						rand.Seed(time.Now().UnixNano())
+						list_len := len(drinklist) - 1
 						idx := rand.Intn(list_len)
 						reply = fmt.Sprintf(
 							"推薦飲料：%s %s %s，價格：%s元", drinklist[idx].Name, drinklist[idx].Sweet, drinklist[idx].Ice, drinklist[idx].Price)
@@ -169,14 +199,19 @@ func main() {
 
 				// 收到的是貼圖
 				case webhook.StickerMessageContent:
-					replyMessage := fmt.Sprintf(
-						"sticker id is %s, stickerResourceType is %s", message.StickerId, message.StickerResourceType)
+					rand.Seed(time.Now().UnixNano())
+					
+					list_len := len(drinklist) - 1
+					idx := rand.Intn(list_len)
+					reply = fmt.Sprintf(
+						"推薦飲料：%s %s %s，價格：%s元", drinklist[idx].Name, drinklist[idx].Sweet, drinklist[idx].Ice, drinklist[idx].Price)
+
 					if _, err = bot.ReplyMessage(
 						&messaging_api.ReplyMessageRequest{
 							ReplyToken: e.ReplyToken,
 							Messages: []messaging_api.MessageInterface{
 								messaging_api.TextMessage{
-									Text: replyMessage,
+									Text: reply,
 								},
 							},
 						}); err != nil {
