@@ -19,6 +19,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"encoding/csv"
+	"strconv"
 
 	"github.com/line/line-bot-sdk-go/v8/linebot"
 	"github.com/line/line-bot-sdk-go/v8/linebot/messaging_api"
@@ -33,6 +35,8 @@ type Drink struct {
 	Sweet string
 	Ice string
 }
+
+var list_len int = 0
 
 var drinklist = []Drink{
 	Drink {
@@ -53,23 +57,21 @@ func read_csv() {
 	}
 	defer file.Close()
 
-	// Create a new CSV reader
 	reader := csv.NewReader(file)
 
-	// Read all records from CSV
 	records, err := reader.ReadAll()
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
 	}
 
-	// Skip header row
 	for idx, record := range records {
 		if idx == 0 {
 			continue
 		}
 
-		
+		list_len += 1
+
 		price, _ := strconv.Atoi(record[2])
 
 		drink := Drink{
@@ -81,14 +83,13 @@ func read_csv() {
 			Ice: "微冰",
 		}
 
-		// Add drink to drinklist
 		drinklist = append(drinklist, drink)
 	}
 
-	// Print the updated drinklist
 }
 
 func main() {
+	read_csv()
 	channelSecret := os.Getenv("LINE_CHANNEL_SECRET")
 	bot, err := messaging_api.NewMessagingApiAPI(
 		os.Getenv("LINE_CHANNEL_TOKEN"),
@@ -121,8 +122,10 @@ func main() {
 				switch message := e.Message.(type) {
 				// 收到的是文字訊息
 				case webhook.TextMessageContent:
+					rand.Seed(time.Now().UnixNano())
+					idx := rand.Intn(list_len)
 					reply := fmt.Sprintf(
-						"推薦飲料: %s %s %s %s， 價格: %s 元", drinklist[0].Store, drinklist[0].Name, drinklist[0].Sweet, drinklist[0].Ice, drinklist[0].Price)
+						"推薦飲料: %s %s %s %s， 價格: %s 元", drinklist[idx].Store, drinklist[idx].Name, drinklist[idx].Sweet, drinklist[idx].Ice, drinklist[idx].Price)
 
 					// 回覆
 					if _, err = bot.ReplyMessage(
