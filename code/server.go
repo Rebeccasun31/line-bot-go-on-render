@@ -62,7 +62,8 @@ func main() {
 							ReplyToken: e.ReplyToken,
 							Messages: []messaging_api.MessageInterface{
 								messaging_api.TextMessage{
-									Text: message.Text,
+									// Text: message.Text,
+									Text: "123",
 								},
 							},
 						},
