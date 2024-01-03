@@ -168,6 +168,23 @@ func main() {
 					} else if message.Text[0] == '2' {
 						reply = delDrink(message.Text)
 						
+					} else if message.Text[0] == '3' {
+						// search
+					} else if message.Text[0] == '4' { //latest 10
+						reply = ""
+						list_len := len(drinklist) - 1
+
+						for i := 0; i < 10 && i < list_len; i++ {
+							cur := reply = fmt.Sprintf(
+								"%s %s %s，價格：%s元\n", drinklist[list_len-i].Name, drinklist[list_len-i].Sweet, drinklist[list_len-i].Ice, drinklist[list_len-i].Price)
+
+							reply += cur
+						}
+
+						if len(reply) > 0 {
+							reply = reply[:len(reply)-1]
+						}
+
 					} else {
 						rand.Seed(time.Now().UnixNano())
 						list_len := len(drinklist) - 1
