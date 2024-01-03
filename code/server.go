@@ -20,7 +20,7 @@ import (
 	"net/http"
 	"os"
 	"encoding/csv"
-	"strconv"
+	// "strconv"
 	"math/rand"
 	"time"
 
@@ -142,7 +142,7 @@ func main() {
 					} else {
 						log.Println("Sent text reply.")
 					}
-					
+
 				// 收到的是貼圖
 				case webhook.StickerMessageContent:
 					replyMessage := fmt.Sprintf(
