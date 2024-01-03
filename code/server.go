@@ -20,7 +20,7 @@ import (
 	"net/http"
 	"os"
 	"encoding/csv"
-	// "strconv"
+	"strings"
 	"math/rand"
 	"time"
 
@@ -84,7 +84,7 @@ func read_csv() {
 
 func addDrink(input string) string {
 	str := strings.Fields(input)
-	if len(str) < 5 {
+	if len(str) != 5 {
 		return "輸入格式錯誤！"
 	}
 	newDrink := Drink {
